@@ -1,3 +1,9 @@
 /* styles.css */
 
 /* Add styles here to customize the appearance of your app */
+
+.add-new-connection-btn {
+    position: fixed;
+    right: 20px;
+    bottom: 15px;
+}

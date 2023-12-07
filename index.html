@@ -5,15 +5,115 @@
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'">
     <link href="./styles.css" rel="stylesheet">
-    <title>Hello World!</title>
+    <link href="./css/bootstrap.min.css" rel="stylesheet">
+    <title>T1012 File Downloader</title>
+    
   </head>
   <body>
-    <h1>Hello World!</h1>
-    We are using Node.js <span id="node-version"></span>,
-    Chromium <span id="chrome-version"></span>,
-    and Electron <span id="electron-version"></span>.
+    
+    <div class="connection-section">
 
-    <!-- You can also require other files to run in this process -->
+      <div class="add-new-connection-btn">
+        <td><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#connection-modal">Add New</button></td>
+      </div>
+      <div>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Name</th>
+              <th scope="col">Host</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody class="table-group-divider">
+            <tr>
+              <th scope="row">1</th>
+              <td>Mark</td>
+              <td>Otto</td>
+              <td><button class="btn btn-primary" type="submit">Edit</button> | <button class="btn btn-primary" type="submit">Delete</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div>
+      <div class="modal fade" id="connection-modal" tabindex="-1" aria-labelledby="connection-modal" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Connection</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="input-group mb-3">
+                <span class="input-group-text">Name</span>
+                <input type="text" class="form-control" >
+              </div>
+
+              <div class="input-group mb-3">
+                <span class="input-group-text">Host Name</span>
+                <input type="text" class="form-control" >
+              </div>
+
+              <div class="input-group mb-3">
+                <span class="input-group-text">Host Port</span>
+                <input type="number" class="form-control" >
+              </div>
+
+              <div class="input-group mb-3">
+                <span class="input-group-text">User Name</span>
+                <input type="text" class="form-control" >
+              </div>
+
+              <div class="input-group mb-3">
+                <span class="input-group-text">Password</span>
+                <input type="password" class="form-control" >
+              </div>
+
+              <div class="input-group mb-3">
+                <span class="input-group-text">Key Path</span>
+                <input type="text" class="form-control" >
+              </div>
+
+              <div class="input-group mb-3">
+                <span class="input-group-text">Jump Host</span>
+                <input type="text" class="form-control" >
+              </div>
+
+              <div class="input-group mb-3">
+                <span class="input-group-text">Jump Port</span>
+                <input type="number" class="form-control" >
+              </div>
+
+              <div class="input-group mb-3">
+                <span class="input-group-text">Password</span>
+                <input type="text" class="form-control" >
+              </div>
+
+              <div class="input-group mb-3">
+                <span class="input-group-text">Key Path</span>
+                <input type="text" class="form-control" >
+              </div>
+
+              <div class="input-group mb-3">
+                <span class="input-group-text">Home Path</span>
+                <input type="text" class="form-control" >
+              </div>
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>  
+
     <script src="./renderer.js"></script>
+    <script src="./js/jquery-3.7.1.js"></script>
+    <script src="./js/bootstrap.bundle.min.js"></script>
   </body>
 </html>
