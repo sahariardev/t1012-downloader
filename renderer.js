@@ -1,4 +1,6 @@
 const LOCAL_STORAGE_CACHE_KEY = 'connection';
+const CURRENT_PATH_CACHE_KEY = 'currentPath';
+const ACTIVE_CONNECTION_CACHE_KET = 'activeConnection'
       
 $(function(){
     renderConnectionList();
@@ -25,7 +27,7 @@ $(function(){
             jumpHostUserName : $('#jump-host-username').val(),
             jumpHostPassword: $('#jump-host-password').val(),
             jumpHostKeyPath: $('#jump-host-key-path').val(),
-            jumpHostHomePath: $('#jump-host-home-path').val()
+            homePath: $('#home-path').val()
         };
         
         if (action === 'EDIT') {
@@ -94,11 +96,9 @@ $(function(){
       const $tr = $(e.currentTarget).parent().parent();
       connectionId = $tr.data('id');
       connection = getConnection(connectionId);
+      connection.path = connection.homePath;
       sendConnectionInfoToBackend(connection);
-      
       $('#connection-section').hide();
-      renderDataTable();
-      $('#file-explorer-section').show();
     });
   };
 
@@ -115,7 +115,7 @@ $(function(){
       $('#jump-host-username').val(connection.jumpHostUserName),
       $('#jump-host-password').val(connection.jumpHostPassword);
       $('#jump-host-key-path').val(connection.jumpHostKeyPath);
-      $('#jump-host-home-path').val(connection.jumpHostHomePath);
+      $('#home-path').val(connection.homePath);
   }
 
   const cleanConnectionModal = () => {
@@ -131,7 +131,7 @@ $(function(){
      $('#jump-host-username').val(''),
      $('#jump-host-password').val(''),
      $('#jump-host-key-path').val(''),
-     $('#jump-host-home-path').val('')
+     $('#home-path').val('')
  }
 
   const getConnections = () => {
@@ -165,47 +165,33 @@ $(function(){
   }
 
   const cleanFileExplorerSection = () => {
-    $('#table').DataTable().destroy();
+    if ( $.fn.DataTable.isDataTable( '#table' ) ) {
+      $('#table').DataTable().destroy();  
+    }
   }
 
-  const renderDataTable = () => {
- 
-    function enter(data) {
-      console.log(data);
-    }
-
-    const data = [
-      {
-        path: '/asdasd/adasdad/',
-        createdAt : 'asdadasd',
-        desc: 'Hello world'
-      },
-      {
-        path: '/asdasd/adasdad/dasdsad',
-        createdAt : 'asdadasd',
-        desc: 'Hello world 2'
-      },
-    ];
+  const renderDataTable = (data) => {
+    cleanFileExplorerSection();
 
     const columns = [
       {
-        data: 'path',
-        title: 'Path'
+        data: 'name',
+        title: 'Name'
       },
       {
         data: 'createdAt',
         title: 'Created At'
       },
       {
-        data: 'desc',
-        title: 'Description'
-      },
-      {
-        data: "path", 
+        data: "name", 
         title : "Action", 
         class: "all never action-btn",
-        render: function(data) {
-           return '<button class="btn btn-primary open-path" path='+data+'>Open</button>'
+        render: function(data, ignore, row) {
+           if (row.type === 'FILE') {
+            return '<button class="btn btn-primary download-file" path='+data+'>Download</button>'
+           } else {
+            return '<button class="btn btn-primary open-path" path='+data+'>Open</button>'
+           }
         },
 
         sortable : false
@@ -219,10 +205,54 @@ $(function(){
 
     $('.open-path').on('click', function(e) {
       console.log($(e.currentTarget).attr('path'));
+      const connection = getActiveConnection();
+      connection.path = getCurrentPath() + '/' + $(e.currentTarget).attr('path');
+      console.log(connection);
+      
+      sendConnectionInfoToBackend(connection);
     });
 
   }
 
   const sendConnectionInfoToBackend = (connection) => {
+    setCurrentPath(connection.path);
+    setActiveConnection(connection);
     ipcRenderer.send('connect', connection);
   }
+
+  ipcRenderer.on('listDir', function (event, response) {
+    const data = response.data;
+    console.log(data);
+
+    let fileInfos = [];
+
+    for (let fileInfo of data) {
+      let fileInfoProcessedData = {
+         name : fileInfo.filename,
+         longname: fileInfo.longname,
+         createdAt: new Date(fileInfo.attrs.atime * 1000),
+         type: fileInfo.longname.charAt(0) == 'd' ? 'DIRECTORY' : 'FILE'
+      }
+
+      fileInfos.push(fileInfoProcessedData);
+    }
+
+  renderDataTable(fileInfos);
+   $('#file-explorer-section').show();
+});
+
+const setCurrentPath = (path) => {
+  localStorage.setItem(CURRENT_PATH_CACHE_KEY, path);
+}
+
+const getCurrentPath = () => {
+  return localStorage.getItem(CURRENT_PATH_CACHE_KEY);
+}
+
+const setActiveConnection = (connection) => {
+  localStorage.setItem(ACTIVE_CONNECTION_CACHE_KET, JSON.stringify(connection));
+} 
+
+const getActiveConnection = () => {
+  return JSON.parse(localStorage.getItem(ACTIVE_CONNECTION_CACHE_KET));
+}

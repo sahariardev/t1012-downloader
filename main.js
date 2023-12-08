@@ -3,6 +3,8 @@ const path = require('node:path');
 const { Client } = require('ssh2');
 const { readFileSync } = require('fs');
 
+let mainWindow = null;
+
 function createWindow () {
   mainWindow = new BrowserWindow({
     width: 1200,
@@ -39,17 +41,40 @@ app.on('window-all-closed', function () {
 
 
 ipcMain.on('connect', async (event, data) => {
-   // try to connect and fetch data
-   // if success then return success event with data
-   // if fails return fail event
+  if(data.jumpHost) {
+    executeActionOnJumpHostConnection(data, directoryListFetchHandler, errorHandler);
+  } else {
+    executeActionOnSingleHostConnection(data, directoryListFetchHandler, errorHandler)
+  }
 });
 
+const errorHandler = (error) => {
+  console.log(error);
+  mainWindow.webContents.send('connectionError', {message: 'Connection Error'});
+}
+
+const directoryListFetchHandler = (sftp, path, conn, jumpConn) => {
+  sftp.readdir(path, (err, list) => {
+  
+    if (err) {
+      errorHandler(err);
+      return;
+    };
+    conn.end();
+    if(jumpConn) {
+      jumpConn.end();
+    }
+    mainWindow.webContents.send('listDir', {data: list});
+  });
+}
+
 const executeActionOnSingleHostConnection = (connection, action, errorHandler) => {
+
   const conn = new Client();
 
   let connectionConf = {
-    host: connection.host,
-    port: connection.port,
+    host: connection.hostName,
+    port: parseInt(connection.hostPort),
     username: connection.userName,
   };
 
@@ -58,15 +83,14 @@ const executeActionOnSingleHostConnection = (connection, action, errorHandler) =
   } else {
     connectionConf.privateKey = readFileSync(connection.keyPath);
   }
-
   conn.on('ready', () => {
       conn.sftp((err, sftp) => {
         if (err) {
+          console.log(err);
           errorHandler(err);
           return conn.end(); 
         }
-        action(err, sftp);
-        return conn.end();
+        action(sftp, connection.path, conn);
       });
   }).connect(connectionConf);
 };
@@ -116,13 +140,12 @@ const executeActionOnJumpHostConnection = (connection, action, errorHandler) => 
   }).connect(connectionConf);
   
   conn2.on('ready', () => {  
-    conn.sftp((err, sftp) => {
+    conn2.sftp((err, sftp) => {
       if(err) {
         errorHandler(err);
         return conn2.end();
       } else {
-        action(sftp);
-        conn2.end();
+        action(sftp, connection.path, conn2, conn1);
       }
     });
   });
