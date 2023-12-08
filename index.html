@@ -13,8 +13,8 @@
     
     <div class="connection-section">
 
-      <div class="add-new-connection-btn">
-        <td><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#connection-modal">Add New</button></td>
+      <div class="add-new-connection-btn-container">
+        <td><button class="btn btn-primary add-new-connection-btn" data-bs-toggle="modal" data-bs-target="#connection-modal">Add New</button></td>
       </div>
       <div>
         <table class="table table-striped">
@@ -26,13 +26,8 @@
               <th scope="col">Action</th>
             </tr>
           </thead>
-          <tbody class="table-group-divider">
-            <tr>
-              <th scope="row">1</th>
-              <td>Mark</td>
-              <td>Otto</td>
-              <td><button class="btn btn-primary" type="submit">Edit</button> | <button class="btn btn-primary" type="submit">Delete</button></td>
-            </tr>
+          <tbody class="table-group-divider" id="connection-table-body">
+            
           </tbody>
         </table>
       </div>
@@ -47,6 +42,7 @@
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+              <input type="hidden" id="connection-id">
               <div class="input-group mb-3">
                 <span class="input-group-text">Name</span>
                 <input type="text" class="form-control" id="connection-name">
@@ -104,7 +100,7 @@
 
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-secondary" id="modal-close-btn" data-bs-dismiss="modal">Close</button>
               <button type="button" class="btn btn-primary" id="submit-btn">Save changes</button>
             </div>
           </div>
