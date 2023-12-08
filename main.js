@@ -1,6 +1,7 @@
-// Modules to control application life and create native browser window
-const { app, BrowserWindow } = require('electron')
-const path = require('node:path')
+const { app, BrowserWindow,ipcMain, dialog } = require('electron');
+const path = require('node:path');
+const { Client } = require('ssh2');
+const { readFileSync } = require('fs');
 
 function createWindow () {
   mainWindow = new BrowserWindow({
@@ -22,9 +23,6 @@ mainWindow.loadFile('index.html')
 
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   createWindow()
 
@@ -35,12 +33,97 @@ app.whenReady().then(() => {
   })
 })
 
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
 app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') app.quit()
-})
+});
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
+
+ipcMain.on('connect', async (event, data) => {
+   // try to connect and fetch data
+   // if success then return success event with data
+   // if fails return fail event
+});
+
+const executeActionOnSingleHostConnection = (connection, action, errorHandler) => {
+  const conn = new Client();
+
+  let connectionConf = {
+    host: connection.host,
+    port: connection.port,
+    username: connection.userName,
+  };
+
+  if (connection.password) {
+    connectionConf.password = connection.password;
+  } else {
+    connectionConf.privateKey = readFileSync(connection.keyPath);
+  }
+
+  conn.on('ready', () => {
+      conn.sftp((err, sftp) => {
+        if (err) {
+          errorHandler(err);
+          return conn.end(); 
+        }
+        action(err, sftp);
+        return conn.end();
+      });
+  }).connect(connectionConf);
+};
+
+const executeActionOnJumpHostConnection = (connection, action, errorHandler) => {
+  let connectionConf = {
+    host: connection.host,
+    port: connection.port,
+    username: connection.userName,
+  };
+
+  if (connection.password) {
+    connectionConf.password = connection.password;
+  } else {
+    connectionConf.privateKey = readFileSync(connection.keyPath);
+  }
+
+  let connectionConf2 = {
+    host: connection.jumpHost,
+    port: connection.jumpPort,
+    username: connection.jumpHostUserName,
+  };
+ 
+  const conn1 = new Client();
+  const conn2 = new Client();
+
+  conn1.on('ready', () => {
+    conn1.forwardOut('127.0.0.1', 12345, connectionConf2.host, connectionConf2.port, (err, stream) => {
+      if (err) {
+        errorHandler(err);
+        return conn1.end();
+      }
+
+      let conf = {
+        sock: stream,
+        username: connectionConf2.username,
+      }
+
+      if (connection.jumpHostPassword) {
+        conf.password = connection.jumpHostPassword;
+      } else {
+        conf.privateKey = readFileSync(connection.jumpHostKeyPath);
+      }
+
+      conn2.connect(conf);
+    });
+  }).connect(connectionConf);
+  
+  conn2.on('ready', () => {  
+    conn.sftp((err, sftp) => {
+      if(err) {
+        errorHandler(err);
+        return conn2.end();
+      } else {
+        action(sftp);
+        conn2.end();
+      }
+    });
+  });
+}

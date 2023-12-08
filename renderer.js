@@ -22,6 +22,7 @@ $(function(){
             keyPath : $('#key-path').val(),
             jumpHost : $('#jump-host').val(),
             jumpPort: $('#jump-port').val(),
+            jumpHostUserName : $('#jump-host-username').val(),
             jumpHostPassword: $('#jump-host-password').val(),
             jumpHostKeyPath: $('#jump-host-key-path').val(),
             jumpHostHomePath: $('#jump-host-home-path').val()
@@ -93,7 +94,7 @@ $(function(){
       const $tr = $(e.currentTarget).parent().parent();
       connectionId = $tr.data('id');
       connection = getConnection(connectionId);
-      // todo: do connect
+      sendConnectionInfoToBackend(connection);
       
       $('#connection-section').hide();
       renderDataTable();
@@ -218,4 +219,8 @@ $(function(){
       console.log($(e.currentTarget).attr('path'));
     });
 
+  }
+
+  const sendConnectionInfoToBackend = (connection) => {
+    ipcRenderer.send('connect', connection);
   }

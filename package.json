@@ -19,6 +19,7 @@
     "electron-builder": "^22.11.7"
   },
   "dependencies": {
-    "jquery": "^3.7.1"
+    "jquery": "^3.7.1",
+    "ssh2": "^1.14.0"
   }
 }
