@@ -47,6 +47,10 @@ $(function(){
       cleanFileExplorerSection();
     });
 
+    $('#refresh-btn').on('click', function(e) {
+        sendConnectionInfoToBackend(getActiveConnection());
+    });
+
   });
 
   const renderConnectionList = () => {
