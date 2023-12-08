@@ -30,3 +30,7 @@
     bottom: 10px;
     right: 15px;
 }
+
+.breadcrumb-item {
+    cursor: pointer;
+}

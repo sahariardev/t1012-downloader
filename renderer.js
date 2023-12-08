@@ -204,10 +204,8 @@ $(function(){
     });
 
     $('.open-path').on('click', function(e) {
-      console.log($(e.currentTarget).attr('path'));
       const connection = getActiveConnection();
       connection.path = getCurrentPath() + '/' + $(e.currentTarget).attr('path');
-      console.log(connection);
       
       sendConnectionInfoToBackend(connection);
     });
@@ -222,7 +220,6 @@ $(function(){
 
   ipcRenderer.on('listDir', function (event, response) {
     const data = response.data;
-    console.log(data);
 
     let fileInfos = [];
 
@@ -237,9 +234,39 @@ $(function(){
       fileInfos.push(fileInfoProcessedData);
     }
 
+  updateBreadCrumb();
   renderDataTable(fileInfos);
    $('#file-explorer-section').show();
 });
+
+
+const updateBreadCrumb = () => {
+  const currentPath = getCurrentPath();
+
+  const $breadcrumb = $('.breadcrumb');
+  $breadcrumb.html('');
+  let pathStr = '';
+
+  for(let path of currentPath.split('/')) {
+    const $li = $('<li>', {class : 'breadcrumb-item'});
+
+    if(pathStr.at(-1) === '/') {
+      pathStr += path;  
+    } else {
+      pathStr += '/' + path;
+    }
+    $li.append($('<a>', {class : 'bread-crumb-path'}).attr('path', pathStr).html(path.toUpperCase()));
+    $breadcrumb.append($li);
+  }
+
+  $('.bread-crumb-path').on('click', function(e) {
+    const connection = getActiveConnection();
+    connection.path = $(e.currentTarget).attr('path');
+      
+      sendConnectionInfoToBackend(connection);
+  });
+
+}
 
 const setCurrentPath = (path) => {
   localStorage.setItem(CURRENT_PATH_CACHE_KEY, path);
