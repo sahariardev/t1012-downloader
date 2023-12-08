@@ -7,3 +7,26 @@
     right: 20px;
     bottom: 15px;
 }
+
+#file-explorer-section {
+    display: none;
+}
+
+.breadcrumb-container {
+    background-color: #dfdfdf;
+    padding-top: 5px;
+    padding-bottom: 1px;
+    margin: auto;
+    text-align: center;
+    padding-left: 19px;
+}
+
+.data-table-container {
+   padding: 20px;
+}
+
+.action-btn-container {
+    position: fixed;
+    bottom: 10px;
+    right: 15px;
+}

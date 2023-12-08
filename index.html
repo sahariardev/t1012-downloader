@@ -6,12 +6,13 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'">
     <link href="./styles.css" rel="stylesheet">
     <link href="./css/bootstrap.min.css" rel="stylesheet">
+    <link href="./css/jquery.dataTables.min.css" rel="stylesheet">
     <title>T1012 File Downloader</title>
     
   </head>
   <body>
     
-    <div class="connection-section">
+    <div id="connection-section">
 
       <div class="add-new-connection-btn-container">
         <td><button class="btn btn-primary add-new-connection-btn" data-bs-toggle="modal" data-bs-target="#connection-modal">Add New</button></td>
@@ -31,6 +32,27 @@
           </tbody>
         </table>
       </div>
+    </div>
+
+    <div id="file-explorer-section">
+      <div class="breadcrumb-container">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item"><a href="#">Library</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Data</li>
+          </ol>
+        </nav>
+      </div>
+      <div class="data-table-container">
+        <table id="table" class="display nowrap" style="width:100%">
+
+        </table>
+      </div>
+       <div class="action-btn-container">
+        <button class="btn btn-primary">Reresh</button>
+        <button class="btn btn-primary" id="connection-list">Connection List</button>
+       </div> 
     </div>
 
     <div>
@@ -109,6 +131,8 @@
     </div>  
 
     <script src="./js/bootstrap.bundle.min.js"></script>
+    <script src="./js/dependency.js"></script>
+    <script src="./js/jquery.dataTables.min.js"></script>
     <script src="./renderer.js"></script>
   
   </body>

@@ -1,7 +1,3 @@
-
-window.rifat = 'Hello world';
-window.$ = window.jQuery = require('./js/jquery-3.7.1.js'); 
-
 const LOCAL_STORAGE_CACHE_KEY = 'connection';
       
 $(function(){
@@ -41,6 +37,13 @@ $(function(){
 
         $('#modal-close-btn').trigger('click');
     });
+
+    $('#connection-list').on('click', function(){
+      $('#connection-section').show();
+      $('#file-explorer-section').hide();
+      cleanFileExplorerSection();
+    });
+
   });
 
   const renderConnectionList = () => {
@@ -61,8 +64,14 @@ $(function(){
        
        let $editBtn = $('<button>', {class:'btn btn-primary edit-btn'}).html('Edit');
        let $deleteBtn = $('<button>', {class:'btn btn-primary delete-btn'}).html('Delete');
+       let $connectBtn = $('<button>', {class:'btn btn-primary connect-btn'}).html('Connect');
 
-       $tr.append($('<td>').append($editBtn).append($('<span>').html('|')).append($deleteBtn));
+       $tr.append($('<td>')
+                            .append($editBtn)
+                            .append($('<span>').html(' | '))
+                            .append($deleteBtn)
+                            .append($('<span>').html(' | '))
+                            .append($connectBtn));
        $table.append($tr);
     }
 
@@ -78,6 +87,17 @@ $(function(){
       connection = getConnection(connectionId);
       populateConnectionOnUi(connection);
       $('.add-new-connection-btn').trigger('click');
+    });
+
+    $('.connect-btn').on('click', (e) => {
+      const $tr = $(e.currentTarget).parent().parent();
+      connectionId = $tr.data('id');
+      connection = getConnection(connectionId);
+      // todo: do connect
+      
+      $('#connection-section').hide();
+      renderDataTable();
+      $('#file-explorer-section').show();
     });
   };
 
@@ -139,4 +159,63 @@ $(function(){
      } else {
       return {};
      }
+  }
+
+  const cleanFileExplorerSection = () => {
+    $('#table').DataTable().destroy();
+  }
+
+  const renderDataTable = () => {
+ 
+    function enter(data) {
+      console.log(data);
+    }
+
+    const data = [
+      {
+        path: '/asdasd/adasdad/',
+        createdAt : 'asdadasd',
+        desc: 'Hello world'
+      },
+      {
+        path: '/asdasd/adasdad/dasdsad',
+        createdAt : 'asdadasd',
+        desc: 'Hello world 2'
+      },
+    ];
+
+    const columns = [
+      {
+        data: 'path',
+        title: 'Path'
+      },
+      {
+        data: 'createdAt',
+        title: 'Created At'
+      },
+      {
+        data: 'desc',
+        title: 'Description'
+      },
+      {
+        data: "path", 
+        title : "Action", 
+        class: "all never action-btn",
+        render: function(data) {
+           return '<button class="btn btn-primary open-path" path='+data+'>Open</button>'
+        },
+
+        sortable : false
+      },
+    ];
+
+    $('#table').DataTable({
+          aaData: data,
+          columns: columns
+    });
+
+    $('.open-path').on('click', function(e) {
+      console.log($(e.currentTarget).attr('path'));
+    });
+
   }
