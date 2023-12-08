@@ -112,6 +112,7 @@ $(function(){
       $('#key-path').val(connection.keyPath);
       $('#jump-host').val(connection.jumpHost);
       $('#jump-port').val(connection.jumpPort);
+      $('#jump-host-username').val(connection.jumpHostUserName),
       $('#jump-host-password').val(connection.jumpHostPassword);
       $('#jump-host-key-path').val(connection.jumpHostKeyPath);
       $('#jump-host-home-path').val(connection.jumpHostHomePath);
@@ -127,6 +128,7 @@ $(function(){
      $('#key-path').val(''),
      $('#jump-host').val(''),
      $('#jump-port').val(''),
+     $('#jump-host-username').val(''),
      $('#jump-host-password').val(''),
      $('#jump-host-key-path').val(''),
      $('#jump-host-home-path').val('')
