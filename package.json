@@ -1,10 +1,12 @@
 {
   "name": "T1012Downloader",
+  "productName" : "T1012 Downloader",
   "version": "1.0.0",
   "description": "An application to download files from remote host",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "package": "electron-builder --dir"
   },
   "repository": "https://github.com/sahariardev/t1012-downloader",
   "keywords": [
@@ -22,5 +24,9 @@
     "downloads-folder": "^3.0.3",
     "jquery": "^3.7.1",
     "ssh2": "^1.14.0"
+  },
+  "build" : {
+    "appId" : "com.rifat.t1012.file.downloader",
+    "files" : "!build-assets{/*}"
   }
 }
