@@ -102,7 +102,7 @@ const renderConnectionList = () => {
     connection = getConnection(connectionId);
     connection.path = connection.homePath;
     sendConnectionInfoToBackend(connection);
-    
+
   });
 };
 
@@ -204,21 +204,22 @@ const renderDataTable = (data) => {
 
   $('#table').DataTable({
     aaData: data,
-    columns: columns
-  });
+    columns: columns,
+    "drawCallback": function (settings) {
+      $('.open-path').on('click', function (e) {
+        const connection = getActiveConnection();
+        connection.path = getCurrentPath() + '/' + $(e.currentTarget).attr('path');
 
-  $('.open-path').on('click', function (e) {
-    const connection = getActiveConnection();
-    connection.path = getCurrentPath() + '/' + $(e.currentTarget).attr('path');
+        sendConnectionInfoToBackend(connection);
+      });
 
-    sendConnectionInfoToBackend(connection);
-  });
+      $('.download-file').on('click', function (e) {
+        const connection = getActiveConnection();
+        connection.path = getCurrentPath() + '/' + $(e.currentTarget).attr('path');
 
-  $('.download-file').on('click', function (e) {
-    const connection = getActiveConnection();
-    connection.path = getCurrentPath() + '/' + $(e.currentTarget).attr('path');
-
-    sendFileDownloadInfoToBackend(connection);
+        sendFileDownloadInfoToBackend(connection);
+      });
+    }
   });
 
 }
