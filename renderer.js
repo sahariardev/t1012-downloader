@@ -116,26 +116,26 @@ const populateConnectionOnUi = (connection) => {
   $('#key-path').val(connection.keyPath);
   $('#jump-host').val(connection.jumpHost);
   $('#jump-port').val(connection.jumpPort);
-  $('#jump-host-username').val(connection.jumpHostUserName),
-    $('#jump-host-password').val(connection.jumpHostPassword);
+  $('#jump-host-username').val(connection.jumpHostUserName);
+  $('#jump-host-password').val(connection.jumpHostPassword);
   $('#jump-host-key-path').val(connection.jumpHostKeyPath);
   $('#home-path').val(connection.homePath);
 }
 
 const cleanConnectionModal = () => {
   $('#connection-id').val('');
-  $('#connection-name').val(''),
-    $('#host-name').val(''),
-    $('#host-port').val(''),
-    $('#user-name').val(''),
-    $('#password').val(''),
-    $('#key-path').val(''),
-    $('#jump-host').val(''),
-    $('#jump-port').val(''),
-    $('#jump-host-username').val(''),
-    $('#jump-host-password').val(''),
-    $('#jump-host-key-path').val(''),
-    $('#home-path').val('')
+  $('#connection-name').val('');
+  $('#host-name').val('');
+  $('#host-port').val('');
+  $('#user-name').val('');
+  $('#password').val('');
+  $('#key-path').val(''); å
+  $('#jump-host').val('');
+  $('#jump-port').val('');
+  $('#jump-host-username').val('');
+  $('#jump-host-password').val('');
+  $('#jump-host-key-path').val('');
+  $('#home-path').val('');
 }
 
 const getConnections = () => {
@@ -214,12 +214,23 @@ const renderDataTable = (data) => {
     sendConnectionInfoToBackend(connection);
   });
 
+  $('.download-file').on('click', function (e) {
+    const connection = getActiveConnection();
+    connection.path = getCurrentPath() + '/' + $(e.currentTarget).attr('path');
+
+    sendFileDownloadInfoToBackend(connection);
+  });
+
 }
 
 const sendConnectionInfoToBackend = (connection) => {
   setCurrentPath(connection.path);
   setActiveConnection(connection);
   ipcRenderer.send('connect', connection);
+}
+
+const sendFileDownloadInfoToBackend = (connection) => {
+  ipcRenderer.send('download', connection);
 }
 
 ipcRenderer.on('listDir', function (event, response) {

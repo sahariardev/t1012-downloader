@@ -19,6 +19,7 @@
     "electron-builder": "^22.11.7"
   },
   "dependencies": {
+    "downloads-folder": "^3.0.3",
     "jquery": "^3.7.1",
     "ssh2": "^1.14.0"
   }
