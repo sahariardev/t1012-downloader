@@ -129,7 +129,7 @@ const cleanConnectionModal = () => {
   $('#host-port').val('');
   $('#user-name').val('');
   $('#password').val('');
-  $('#key-path').val(''); å
+  $('#key-path').val('');
   $('#jump-host').val('');
   $('#jump-port').val('');
   $('#jump-host-username').val('');

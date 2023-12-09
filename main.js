@@ -132,8 +132,8 @@ const executeActionOnSingleHostConnection = (connection, action, errorHandler) =
 
 const executeActionOnJumpHostConnection = (connection, action, errorHandler) => {
   let connectionConf = {
-    host: connection.host,
-    port: connection.port,
+    host: connection.hostName,
+    port: parseInt(connection.hostPort),
     username: connection.userName,
   };
 
@@ -145,15 +145,21 @@ const executeActionOnJumpHostConnection = (connection, action, errorHandler) => 
 
   let connectionConf2 = {
     host: connection.jumpHost,
-    port: connection.jumpPort,
+    port: parseInt(connection.jumpPort),
     username: connection.jumpHostUserName,
   };
+
+  if (connection. jumpHostPassword) {
+    connectionConf2.password = connection. jumpHostPassword;
+  } else {
+    connectionConf2.privateKey = readFileSync(connection.jumpHostKeyPath);
+  }
 
   const conn1 = new Client();
   const conn2 = new Client();
 
   conn1.on('ready', () => {
-    conn1.forwardOut('127.0.0.1', 12345, connectionConf2.host, connectionConf2.port, (err, stream) => {
+    conn1.forwardOut('127.0.0.1', 12345, connectionConf.host, connectionConf.port, (err, stream) => {
       if (err) {
         errorHandler(err);
         return conn1.end();
@@ -161,18 +167,18 @@ const executeActionOnJumpHostConnection = (connection, action, errorHandler) => 
 
       let conf = {
         sock: stream,
-        username: connectionConf2.username,
+        username: connectionConf.username,
       }
 
-      if (connection.jumpHostPassword) {
-        conf.password = connection.jumpHostPassword;
+      if (connection.password) {
+        conf.password = connection.password;
       } else {
-        conf.privateKey = readFileSync(connection.jumpHostKeyPath);
+        conf.privateKey = readFileSync(connection.keyPath);
       }
 
       conn2.connect(conf);
     });
-  }).connect(connectionConf);
+  }).connect(connectionConf2);
 
   conn2.on('ready', () => {
     conn2.sftp((err, sftp) => {
