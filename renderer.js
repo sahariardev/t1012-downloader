@@ -233,6 +233,23 @@ const sendFileDownloadInfoToBackend = (connection) => {
   ipcRenderer.send('download', connection);
 }
 
+const appendAlert = (message, type) => {
+  const alertPlaceholder = document.getElementById('alert-place-holder')
+  const wrapper = document.createElement('div')
+  wrapper.innerHTML = [
+    `<div class="alert alert-${type} alert-dismissible" role="alert">`,
+    `   <div>${message}</div>`,
+    '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+    '</div>'
+  ].join('')
+
+  alertPlaceholder.append(wrapper)
+}
+
+ipcRenderer.on('success', function (event, response) {
+  appendAlert(response.message, 'success');
+});
+
 ipcRenderer.on('listDir', function (event, response) {
   const data = response.data;
 

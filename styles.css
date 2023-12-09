@@ -35,3 +35,11 @@
 .breadcrumb-item {
     cursor: pointer;
 }
+
+#alert-place-holder {
+    position: fixed;
+    width: 100%;
+    bottom: 0px;
+    z-index: 1000;
+    text-align: center;
+}
