@@ -122,7 +122,6 @@ const executeActionOnSingleHostConnection = (connection, action, errorHandler) =
   conn.on('ready', () => {
     conn.sftp((err, sftp) => {
       if (err) {
-        console.log(err);
         errorHandler(err);
         return conn.end();
       }

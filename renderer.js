@@ -102,7 +102,7 @@ const renderConnectionList = () => {
     connection = getConnection(connectionId);
     connection.path = connection.homePath;
     sendConnectionInfoToBackend(connection);
-    $('#connection-section').hide();
+    
   });
 };
 
@@ -246,6 +246,10 @@ const appendAlert = (message, type) => {
   alertPlaceholder.append(wrapper)
 }
 
+ipcRenderer.on('connectionError', function (event, response) {
+  appendAlert(response.message, 'danger');
+});
+
 ipcRenderer.on('success', function (event, response) {
   appendAlert(response.message, 'success');
 });
@@ -266,6 +270,7 @@ ipcRenderer.on('listDir', function (event, response) {
     fileInfos.push(fileInfoProcessedData);
   }
 
+  $('#connection-section').hide();
   updateBreadCrumb();
   renderDataTable(fileInfos);
   $('#file-explorer-section').show();
